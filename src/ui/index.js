@@ -21,24 +21,24 @@ if (window) {
 	window['Microblink'] = Microblink;
 }
 
-//insert web components light polyfill for cross-browser compatibility
-let script = document.createElement('script');
-script.src = '//unpkg.com/@webcomponents/webcomponentsjs/webcomponents-loader.js';
-script.addEventListener('load', () => {
-  window.WebComponents.waitFor(() => { //to make sure all polyfills are loaded
-    if (!window.customElements) {
+if (!window.customElements) {
+  //insert web components light polyfill for cross-browser compatibility
+  let script = document.createElement('script');
+  script.src = '//unpkg.com/@webcomponents/webcomponentsjs/webcomponents-loader.js';
+  script.addEventListener('load', () => {
+    window.WebComponents.waitFor(() => { //to make sure all polyfills are loaded
       let fullPolyFillScript = ddocument.createElement('script');
       fullPolyFillScript.src = '//unpkg.com/@webcomponents/webcomponentsjs/bundles/webcomponents-sd-ce-pf.js';
       fullPolyFillScript.addEventListener('load', () => {
         window.WebComponents.waitFor(defineComponent); //fallback in case of unloaded pollyfills (fixes strange bug)
       });
       document.head.insertBefore(fullPolyFillScript, document.head.querySelector('script[src*="microblink."]'));
-    } else {
-      defineComponent();
-    }
-  });
-});
-document.head.insertBefore(script, document.head.querySelector('script[src*="microblink."]'));
+    });
+  })
+  document.head.insertBefore(script, document.head.querySelector('script[src*="microblink."]'));
+} else {
+  defineComponent();
+}
 
 if (screenfull && screenfull.isEnabled) adjustScreenFull(screenfull);
 
@@ -608,7 +608,7 @@ function defineComponent() {
           }
 
           console.log(video);
-          
+
           video.load();
           setTimeout(() => {
             video.play().catch(() => {
